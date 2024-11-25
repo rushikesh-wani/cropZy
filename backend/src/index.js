@@ -5,6 +5,8 @@ const { connectDB } = require("./config/db");
 const userAuthRouter = require("./routes/user.routes");
 const orderRouter = require("./routes/order.routes");
 const farmerRouter = require("./routes/farmer.routes");
+const productRouter = require("./routes/product.routes");
+const customerRouter = require("./routes/customer.routes");
 require("dotenv").config();
 
 const app = express();
@@ -24,6 +26,8 @@ app.use(cookieParser());
 app.use(`${API_BASE_URL}/`, userAuthRouter);
 app.use(`${API_BASE_URL}/`, orderRouter);
 app.use(`${API_BASE_URL}/`, farmerRouter);
+app.use(`${API_BASE_URL}/`, productRouter);
+app.use(`${API_BASE_URL}/`, customerRouter);
 
 // Connect to DB
 connectDB()

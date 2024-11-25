@@ -15,6 +15,7 @@ node_modules/
 routes.txt
 models.txt
 Learnings.txt
+guide_to_API.txt
 
 # Build output
 dist/

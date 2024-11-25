@@ -4,12 +4,12 @@ const orderSchema = mongoose.Schema(
   {
     farmerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Farmer",
+      ref: "user",
       required: true,
     },
     customerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
+      ref: "user",
       require: true,
     },
     orderDate: {
@@ -26,7 +26,23 @@ const orderSchema = mongoose.Schema(
     },
     item: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "product",
       required: true,
+    },
+    weight: {
+      value: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+      unit: {
+        type: String,
+        required: true,
+        enum: {
+          values: ["gm", "kg", "liters", "ml", "Piece", "Combo"],
+          message: `{VALUE} is not the valid unit`,
+        },
+      },
     },
     price: {
       type: Number,

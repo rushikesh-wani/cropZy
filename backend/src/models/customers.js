@@ -12,9 +12,6 @@ const customerSchema = new mongoose.Schema(
       trim: true,
       maxLength: 150,
     },
-    favoriteFarmers: {
-      type: [mongoose.Schema.Types.ObjectId],
-    },
   },
   { timestamps: true }
 );

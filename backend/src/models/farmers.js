@@ -19,12 +19,6 @@ const farmerSchema = mongoose.Schema(
       trim: true,
       maxLength: 150,
     },
-    crops: {
-      type: [String],
-    },
-    orderReceived: {
-      type: [mongoose.Schema.Types.ObjectId],
-    },
   },
   { timestamps: true }
 );

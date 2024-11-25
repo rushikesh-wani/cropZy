@@ -47,31 +47,75 @@ const encrptPass = async (password) => {
   return await bcrypt.hash(password, saltRound);
 };
 
-const validateItemEditFields = async (req) => {
-  // let { itemName, pricePerUnit, category, description, quantity } = req.body;
-  // const allowedFields = [
-  //   "itemName",
-  //   "pricePerUnit",
-  //   "category",
-  //   "description",
-  //   "quantity",
-  // ];
-  // const isItemEditAllowed = Object.keys(req.body).every((field) =>
-  //   allowedFields.includes(field)
-  // );
-  // const isItemNameAllowed = isLength(itemName, { max: 150 });
-  // const isPricePerUnitValid = isNumeric(pricePerUnit);
-  // const isCategoryValid = isAlphanumeric(category);
-  // const isDescriptionValid = isLength(description, { max: 250 });
-  // const isQuantityValid = isNumeric(quantity);
-  // return (
-  //   isItemEditAllowed &&
-  //   isItemNameAllowed &&
-  //   isPricePerUnitValid &&
-  //   isCategoryValid &&
-  //   isDescriptionValid &&
-  //   isQuantityValid
-  // );
+const validateItemEditFields = async (data) => {
+  const allowedFields = [
+    "itemName",
+    "pricePerUnit",
+    "category",
+    "description",
+    "quantity",
+  ];
+
+  const errors = {};
+  const sanitizedData = {};
+
+  const invalidFields = Object.keys(data).filter(
+    (field) => !allowedFields.includes(field)
+  );
+
+  if (invalidFields.length > 0) {
+    return {
+      inValid: false,
+      errors: { invalidFields: `Invalid fields: ${invalidFields.join(",")}` },
+    };
+  }
+
+  if (data.itemName !== undefined) {
+    if (!validator.isLength(data.itemName.trim(), { min: 1, max: 50 })) {
+      errors.itemName = "Item name must be between 1 and 50 characters long";
+    } else {
+      sanitizedData.itemName = validator.escape(data.itemName.trim());
+    }
+  }
+
+  if (data.pricePerUnit !== undefined) {
+    if (!validator.isFloat(data.pricePerUnit, { min: 0 })) {
+      errors.pricePerUnit = "Price must be positive";
+    } else {
+      sanitizedData.pricePerUnit = validator.escape(data.pricePerUnit);
+    }
+  }
+
+  if (data.category !== undefined) {
+    if (!validator.isLength(data.category.trim(), { min: 1, max: 50 })) {
+      errors.category =
+        "Category name must be between 1 and 50 characters long";
+    } else {
+      sanitizedData.category = validator.escape(data.category.trim());
+    }
+  }
+
+  if (data.description !== undefined) {
+    if (!validator.isLength(data.description.trim(), { max: 200 })) {
+      errors.description = "Description must be only 200 characters long";
+    } else {
+      sanitizedData.description = validator.escape(data.description.trim());
+    }
+  }
+
+  if (data.quantity !== undefined) {
+    if (!validator.isInt(data.quantity, { min: 0 })) {
+      errors.quantity = "Quantity must be 0 or above 0";
+    } else {
+      sanitizedData.quantity = validator.escape(data.quantity);
+    }
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+    sanitizedData,
+  };
 };
 
 module.exports = {

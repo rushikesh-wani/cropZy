@@ -1,9 +1,0 @@
-
-In user collection documents we have field called  - _id
-
-In farmers collections documents we have field called "userId" which has value as => "userId" : user._id
-
-In crops collections documents we have field called "farmerId" which also have value as => "farmerId" : user._id only
-
-
-
