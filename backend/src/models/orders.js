@@ -12,14 +12,10 @@ const orderSchema = mongoose.Schema(
       ref: "user",
       require: true,
     },
-    orderDate: {
-      type: mongoose.Schema.Types.Date,
-      required: true,
-    },
     status: {
       type: String,
       enum: {
-        values: ["pending", "approved", "rejected", "delivered"],
+        values: ["pending", "approved", "rejected", "delivered", "cancel"], // pending => at time of order | approved => approved by farmer | delivered => delivered by farmer | cancel => order cancelled by customer
         message: `{VALUE} is not the valid status`,
       },
       required: true,

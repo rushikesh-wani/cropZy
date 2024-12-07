@@ -7,6 +7,7 @@ const auth = async (req, res, next) => {
     const USER_POPULATE_STR =
       "_id firstName lastName email phone role profileImg";
     const { token } = cookies;
+    // console.log(req.cookies);
     if (!token) {
       throw new Error("Unauthorized request, Login again.");
     }

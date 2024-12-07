@@ -10,9 +10,9 @@ const {
 const signupController = async (req, res) => {
   try {
     // sanitize the req.body
-    sanitizeReqBody(req);
+    sanitizeReqBody(req, res);
     // Validate the req.body
-    await validateReqBody(req);
+    await validateReqBody(req, res);
 
     const {
       firstName,
@@ -66,7 +66,7 @@ const signupController = async (req, res) => {
       });
     }
 
-    res.status(201).json({
+    return res.status(201).json({
       statusCode: 201,
       message: "User created successfully...",
       userId: user._id,

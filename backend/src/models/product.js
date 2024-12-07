@@ -64,13 +64,12 @@ const itemSchema = mongoose.Schema(
       ref: "user",
       required: true,
     },
-    addedAt: {
-      type: Date,
-      required: true,
-    },
   },
   { timestamps: true }
 );
+
+// Indexing
+itemSchema.index({ _id: 1, farmerId: 1 });
 
 const Product = mongoose.model("product", itemSchema);
 

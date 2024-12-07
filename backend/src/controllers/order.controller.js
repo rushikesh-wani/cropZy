@@ -1,6 +1,7 @@
 const Farmer = require("../models/farmers");
 const Order = require("../models/orders");
 const Product = require("../models/product");
+
 const getAllOrder = async (req, res) => {
   try {
     res.send("Hello");
@@ -11,6 +12,7 @@ const getAllOrder = async (req, res) => {
 
 const makeAnOrder = async (req, res) => {
   try {
+    // fix the issue of the quantity and price when the price for Piece is calculated its coming wrong
     const USER_POPULATED_STR = "firstName lastName email phone profileImg";
     const { _id } = req.userData;
     const customerId = _id;
@@ -29,7 +31,8 @@ const makeAnOrder = async (req, res) => {
     if (!value || !unit) {
       return res.status(400).json({
         statusCode: 400,
-        message: "Value and unit of weight are required and must be valid!",
+        message:
+          "Value and unit of weight of Product to be purchased are required and must be valid!",
       });
     }
     // // is farmerId valid
@@ -66,7 +69,20 @@ const makeAnOrder = async (req, res) => {
       });
     }
 
-    const calculatedPrice = price * value; // 1 unit price * Quantity
+    let calculatedPrice;
+    // logic for calclating price based on unit
+    if (
+      isItemValid.weight.unit === "Piece" ||
+      isItemValid.weight.unit === "Combo"
+    ) {
+      const pricePerOnePiece = isItemValid.price / isItemValid.weight.value;
+      calculatedPrice = value * pricePerOnePiece;
+    } else if (
+      isItemValid.weight.unit === "kg" ||
+      isItemValid.weight.unit === "liters"
+    ) {
+      calculatedPrice = price * value; // 1 unit price * Quantity
+    }
 
     const order = new Order({
       customerId,
@@ -78,7 +94,6 @@ const makeAnOrder = async (req, res) => {
         unit: unit,
       },
       price: calculatedPrice,
-      orderDate: Date.now(),
     });
 
     await order.save();
