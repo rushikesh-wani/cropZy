@@ -1,0 +1,38 @@
+export const Products = [
+  {
+    _id: 1,
+    itemName: "Apple",
+    img: "https://media.istockphoto.com/id/183422512/photo/fresh-red-apples-on-white-background.jpg?s=612x612&w=0&k=20&c=OmfmcQLh3mwp4pFVQn9Sr2U8VCyIgGtV6fuaDmd3Yrk=",
+    stockQty: 100,
+    category: "Recently Added",
+    price: 150,
+    unit: "kg",
+  },
+  {
+    _id: 1,
+    itemName: "Apple",
+    img: "https://media.istockphoto.com/id/183422512/photo/fresh-red-apples-on-white-background.jpg?s=612x612&w=0&k=20&c=OmfmcQLh3mwp4pFVQn9Sr2U8VCyIgGtV6fuaDmd3Yrk=",
+    stockQty: 100,
+    category: "Recently Added",
+    price: 150,
+    unit: "kg",
+  },
+  {
+    _id: 1,
+    itemName: "Apple",
+    img: "https://media.istockphoto.com/id/183422512/photo/fresh-red-apples-on-white-background.jpg?s=612x612&w=0&k=20&c=OmfmcQLh3mwp4pFVQn9Sr2U8VCyIgGtV6fuaDmd3Yrk=",
+    stockQty: 100,
+    category: "Recently Added",
+    price: 150,
+    unit: "kg",
+  },
+  {
+    _id: 1,
+    itemName: "Apple",
+    img: "https://media.istockphoto.com/id/183422512/photo/fresh-red-apples-on-white-background.jpg?s=612x612&w=0&k=20&c=OmfmcQLh3mwp4pFVQn9Sr2U8VCyIgGtV6fuaDmd3Yrk=",
+    stockQty: 100,
+    category: "Recently Added",
+    price: 150,
+    unit: "kg",
+  },
+];

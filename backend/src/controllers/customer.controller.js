@@ -1,11 +1,90 @@
 const Order = require("../models/orders");
 const Product = require("../models/product");
 const validator = require("validator");
+const User = require("../models/users");
+const Farmer = require("../models/farmers");
 const { isMongoId } = validator;
 const PRODUCT_FIELDS =
   "itemName stockQty weight img price category description farmerId addedAt";
 const FARMER_POPULATED_FIELDS = "firstName lastName email phone profileImg";
 
+const getCustomerHomepage = async (req, res) => {
+  // const { _id } = req.userData; // Customer ID
+  try {
+    const categoryData = await Product.aggregate([
+      {
+        $group: {
+          _id: "$category", // Group by the 'category' field
+          products: { $push: "$$ROOT" }, // Collect all documents in each category
+          count: { $sum: 1 }, // Count the number of products in each category
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Hide the default `_id` field
+          category: "$_id", // Rename `_id` to `category`
+          products: 1, // Include the array of products
+          count: 1, // Include the count of products
+        },
+      },
+      {
+        $sort: { category: 1 }, // Sort categories alphabetically
+      },
+    ]);
+    const bestSellerData = await User.find({ role: "farmer" }).select(
+      "firstName lastName phone profileImg"
+    );
+    const farmData = await Farmer.find({}).populate(
+      "userId",
+      "firstName lastName profileImg phone"
+    );
+    const productData = await Product.find({}).populate(
+      "farmerId",
+      "firstName lastName profileImg phone"
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Home page details fetched successfully.",
+      data: [
+        {
+          headLine: "Shop by Category",
+          categories: [
+            "Fresh Fruits",
+            "Vegetables",
+            "Dairy Products",
+            "Cereals",
+            "Sproutes",
+          ],
+        },
+        {
+          headLine: "Category based Products",
+          data: categoryData,
+        },
+        {
+          headLine: "Best Sellers",
+          data: bestSellerData,
+        },
+        {
+          headLine: "Shop by Farm",
+          data: farmData,
+        },
+        {
+          headLine: "Shop Farm Fresh Products",
+          data: productData,
+        },
+      ],
+    });
+  } catch (err) {
+    return res.status(500).json({
+      statusCode: 500,
+      success: false,
+      message: "INTERNAL SERVER ERROR",
+      err: err.message,
+    });
+  }
+};
 const myOrderController = async (req, res) => {
   try {
     const { _id } = req.userData;
@@ -145,6 +224,7 @@ const cancelOrderInPendingState = async (req, res) => {
 };
 
 module.exports = {
+  getCustomerHomepage,
   myOrderController,
   getAllProduct,
   getOrdersByStatus,

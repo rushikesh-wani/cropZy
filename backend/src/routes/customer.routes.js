@@ -6,9 +6,13 @@ const {
   getAllProduct,
   cancelOrderInPendingState,
   getOrdersByStatus,
+  getCustomerHomepage,
 } = require("../controllers/customer.controller");
 
 const customerRouter = express.Router();
+
+//GET /home-page => Get User Home page details to show
+customerRouter.get("/home-page", getCustomerHomepage);
 
 // GET /my-orders => Get all the orders of users
 customerRouter.get("/my-orders", auth, customerAuth, myOrderController);

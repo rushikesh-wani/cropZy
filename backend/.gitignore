@@ -16,6 +16,7 @@ routes.txt
 models.txt
 Learnings.txt
 guide_to_API.txt
+ToDo's.txt
 
 # Build output
 dist/

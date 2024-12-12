@@ -105,7 +105,7 @@ const loginController = async (req, res) => {
     if (isPasswordValid) {
       const jwtToken = await isUserRegistered.getJWT();
       res.cookie("token", jwtToken, {
-        httpOnly: true, // Prevent client-side JavaScript access to cookies
+        // httpOnly: true, // Prevent client-side JavaScript access to cookies
         secure: process.env.NODE_ENV === "production", // Set secure to true in production
         sameSite: "lax", // Prevent CSRF but allow same-site requests
         maxAge: 24 * 60 * 60 * 1000, // Set cookie expiry to 1 day
