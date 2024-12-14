@@ -51,11 +51,26 @@ const getCustomerHomepage = async (req, res) => {
         {
           headLine: "Shop by Category",
           categories: [
-            "Fresh Fruits",
-            "Vegetables",
-            "Dairy Products",
-            "Cereals",
-            "Sproutes",
+            {
+              categoryName: "Fresh Fruits",
+              img: "https://res.cloudinary.com/rushikeshwani/image/upload/v1734157025/cropZy/category/fzkiiruumcmglusrkzpd.avif",
+            },
+            {
+              categoryName: "Vegetables",
+              img: "https://res.cloudinary.com/rushikeshwani/image/upload/v1734157025/cropZy/category/pkoey1enez0qwdoqojkn.avif",
+            },
+            {
+              categoryName: "Dairy Products",
+              img: "https://res.cloudinary.com/rushikeshwani/image/upload/v1734156809/cropZy/category/oxij5i4sbcmvwwrff618.avif",
+            },
+            {
+              categoryName: "Cereals",
+              img: "https://res.cloudinary.com/rushikeshwani/image/upload/v1734156809/cropZy/category/ghep78ltvqsmnn6gibhr.avif",
+            },
+            {
+              categoryName: "Spices & Chutney",
+              img: "https://res.cloudinary.com/rushikeshwani/image/upload/v1734156809/cropZy/category/oz47gfyvc6xvsrqn1eah.avif",
+            },
           ],
         },
         {

@@ -7,7 +7,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "cropZy/products", // Folder where files will be uploaded
-    allowed_formats: ["jpg", "jpeg", "png"], // Allowed file formats
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "avif"], // Allowed file formats
   },
 });
 
