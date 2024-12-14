@@ -15,7 +15,6 @@ const API_BASE_URL = process.env.API_BASE_URL;
 // Middlewares
 app.use(
   cors({
-    origin: process.env.ORIGIN_URL,
     credentials: true,
   })
 );
