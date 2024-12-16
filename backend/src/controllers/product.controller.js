@@ -4,6 +4,7 @@ const upload = require("../config/multer");
 const validator = require("validator");
 const { isMongoId } = validator;
 const Order = require("../models/orders");
+const Farmer = require("../models/farmers");
 
 const getProductDetails = async (req, res) => {
   try {
@@ -22,9 +23,12 @@ const getProductDetails = async (req, res) => {
       });
     }
 
-    const itemData = await Product.findOne({ _id: itemId }).select(
-      "itemName description category stockQty price weight img"
-    );
+    const itemData = await Product.findOne({ _id: itemId })
+      .select(
+        "itemName farmerId description category stockQty price weight img farmDetails"
+      )
+      .populate("farmerId", "firstName lastName phone profileImg")
+      .populate("farmDetails", "farmName farmLocation");
     if (!itemData) {
       return res.status(404).json({
         statusCode: 404,
@@ -48,7 +52,10 @@ const getProductDetails = async (req, res) => {
 const getAllItemsController = async (req, res) => {
   try {
     const { _id } = req.userData;
-    const allItems = await Product.find({ farmerId: _id });
+    const allItems = await Product.find({ farmerId: _id }).populate(
+      "farmDetails",
+      "farmName farmLocation"
+    );
 
     if (allItems.length == 0) {
       res.status(200).json({
@@ -83,6 +90,13 @@ const productAddController = async (req, res) => {
       });
     }
 
+    const isFarmerValid = await Farmer.findOne({ userId: _id });
+    if (!isFarmerValid) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: "Farmer Id not valid",
+      });
+    }
     const isItemAlreadyExists = await Product.findOne({
       itemName: itemName,
       farmerId: _id,
@@ -118,6 +132,7 @@ const productAddController = async (req, res) => {
       },
       img: cloudinaryResult.secure_url,
       farmerId: _id,
+      farmDetails: isFarmerValid._id,
     });
     const productData = await product.save();
 

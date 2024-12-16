@@ -64,6 +64,11 @@ const itemSchema = mongoose.Schema(
       ref: "user",
       required: true,
     },
+    farmDetails: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "farmer",
+      required: true,
+    },
   },
   { timestamps: true }
 );

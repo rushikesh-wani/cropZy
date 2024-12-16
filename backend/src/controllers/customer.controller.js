@@ -3,6 +3,7 @@ const Product = require("../models/product");
 const validator = require("validator");
 const User = require("../models/users");
 const Farmer = require("../models/farmers");
+const { default: mongoose } = require("mongoose");
 const { isMongoId } = validator;
 const PRODUCT_FIELDS =
   "itemName stockQty weight img price category description farmerId addedAt";
@@ -238,10 +239,81 @@ const cancelOrderInPendingState = async (req, res) => {
   }
 };
 
+const getFarmerDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // const farmerId = new mongoose.Types.ObjectId(id);
+    const isIdValid = isMongoId(id);
+    if (!isIdValid) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Id provided is not the valid mongo ObjectId",
+      });
+    }
+    const isFarmerValid = await Farmer.findOne({ userId: id }).populate(
+      "userId",
+      "firstName lastName phone profileImg"
+    );
+    if (!isFarmerValid) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Farmer not found!",
+      });
+    }
+    const categoriesData = await Product.aggregate([
+      {
+        $match: {
+          farmerId: new mongoose.Types.ObjectId(id), // Filter products by the provided farmerId
+        },
+      },
+      {
+        $group: {
+          _id: "$category", // Group products by the "category" field
+          totalCount: { $sum: 1 }, // Count the total number of products in each category
+          products: {
+            $push: {
+              _id: "$_id",
+              itemName: "$itemName", // Push product details into the "products" array
+              stockQty: "$stockQty",
+              category: "$category",
+              price: "$price",
+              img: "$img",
+              weight: "$weight",
+              description: "$description",
+            },
+          },
+        },
+      },
+      {
+        $sort: { totalCount: -1 }, // Sort categories by totalCount in descending order
+      },
+    ]);
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: `${isFarmerValid.userId.firstName} ${isFarmerValid.userId.lastName}'s Farmer details fetched successfully...`,
+      data: {
+        farmerData: isFarmerValid,
+        product: categoriesData,
+      },
+    });
+  } catch (err) {
+    return res.status(400).json({
+      statusCode: 400,
+      success: false,
+      message: "INTERNAL SERVER ERROR",
+      err: err.message,
+    });
+  }
+};
+
 module.exports = {
   getCustomerHomepage,
   myOrderController,
   getAllProduct,
   getOrdersByStatus,
   cancelOrderInPendingState,
+  getFarmerDetails,
 };
