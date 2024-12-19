@@ -107,6 +107,7 @@ const loginController = async (req, res) => {
       res.cookie("token", jwtToken, {
         // httpOnly: true, // Prevent client-side JavaScript access to cookies
         secure: process.env.NODE_ENV === "production", // Set secure to true in production
+        sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000, // Set cookie expiry to 1 day
       });
       res.status(200).json({
