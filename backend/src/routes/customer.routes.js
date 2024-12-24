@@ -8,6 +8,7 @@ const {
   getOrdersByStatus,
   getCustomerHomepage,
   getFarmerDetails,
+  profileViewController,
 } = require("../controllers/customer.controller");
 
 const customerRouter = express.Router();
@@ -17,6 +18,13 @@ customerRouter.get("/home-page", getCustomerHomepage);
 
 // GET /getFarmer => Get Farmer details
 customerRouter.get("/getFarmer/:id", getFarmerDetails);
+
+customerRouter.get(
+  "/customer/profileView",
+  auth,
+  customerAuth,
+  profileViewController
+);
 
 // GET /my-orders => Get all the orders of users
 customerRouter.get("/my-orders", auth, customerAuth, myOrderController);

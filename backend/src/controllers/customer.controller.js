@@ -9,6 +9,33 @@ const PRODUCT_FIELDS =
   "itemName stockQty weight img price category description farmerId addedAt";
 const FARMER_POPULATED_FIELDS = "firstName lastName email phone profileImg";
 
+const profileViewController = async (req, res) => {
+  try {
+    const { _id, firstName, lastName, email, phone, role, profileImg } =
+      req.userData;
+
+    if (role !== "customer") {
+      res.status(400).json({
+        statusCode: "400",
+        success: false,
+        err: "Unauthorized access",
+        message: "User logged in does not have access to customer role.",
+      });
+    } else {
+      res.status(200).json({
+        statusCode: 200,
+        message: `Welcome back, ${firstName} ${lastName}!`,
+        data: req.userData,
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      statusCode: "400",
+      err: err.message,
+      message: "Internal server error",
+    });
+  }
+};
 const getCustomerHomepage = async (req, res) => {
   // const { _id } = req.userData; // Customer ID
   try {
@@ -61,7 +88,7 @@ const getCustomerHomepage = async (req, res) => {
               img: "https://res.cloudinary.com/rushikeshwani/image/upload/v1734157025/cropZy/category/pkoey1enez0qwdoqojkn.avif",
             },
             {
-              categoryName: "Dairy Products",
+              categoryName: "Dairy Product",
               img: "https://res.cloudinary.com/rushikeshwani/image/upload/v1734156809/cropZy/category/oxij5i4sbcmvwwrff618.avif",
             },
             {
@@ -316,4 +343,5 @@ module.exports = {
   getOrdersByStatus,
   cancelOrderInPendingState,
   getFarmerDetails,
+  profileViewController,
 };

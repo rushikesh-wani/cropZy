@@ -7,6 +7,7 @@ const orderRouter = require("./routes/order.routes");
 const farmerRouter = require("./routes/farmer.routes");
 const productRouter = require("./routes/product.routes");
 const customerRouter = require("./routes/customer.routes");
+const fileUpload = require("express-fileupload");
 require("dotenv").config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use(fileUpload());
 
 // Routes
 app.use(`${API_BASE_URL}/`, userAuthRouter);

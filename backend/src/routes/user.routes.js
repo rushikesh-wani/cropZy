@@ -3,6 +3,7 @@ const {
   signupController,
   loginController,
   logoutController,
+  isAuthenticated,
 } = require("../controllers/userAuth.controller");
 
 const userAuthRouter = express.Router();
@@ -15,5 +16,7 @@ userAuthRouter.post("/login", loginController);
 
 // END-POINT - POST /logout => logout user
 userAuthRouter.post("/logout", logoutController);
+
+userAuthRouter.get("/protected", isAuthenticated);
 
 module.exports = userAuthRouter;

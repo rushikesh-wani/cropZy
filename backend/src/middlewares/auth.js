@@ -9,7 +9,10 @@ const auth = async (req, res, next) => {
     const { token } = cookies;
     // console.log(req.cookies);
     if (!token) {
-      throw new Error("Unauthorized request, Login again.");
+      // throw new Error("Unauthorized request, Login again.");
+      return res
+        .status(401)
+        .json({ message: "Unauthorized request, Login again." });
     }
     const decodeToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
     // console.log(decodeToken);
@@ -18,7 +21,10 @@ const auth = async (req, res, next) => {
       USER_POPULATE_STR
     );
     if (!userLogged) {
-      throw new Error("Invalid Token found. User not registered.");
+      // throw new Error("Invalid Token found. User not registered.");
+      return res
+        .status(401)
+        .json({ message: "Invalid Token found. User not registered." });
     }
     // Attached userData to req.
     req.userData = userLogged;
@@ -26,11 +32,18 @@ const auth = async (req, res, next) => {
     // console.log("AUTHENTICATED_SUCCESSFULLY");
     next();
   } catch (err) {
-    res.status(400).json({
-      statusCode: 400,
-      message: "Unexpected error occured.",
-      err: err.message,
-    });
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    } else if (err.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    } else {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    // res.status(400).json({
+    //   statusCode: 400,
+    //   message: "Unexpected error occured.",
+    //   err: err.message,
+    // });
   }
 };
 
