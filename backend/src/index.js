@@ -8,6 +8,7 @@ const farmerRouter = require("./routes/farmer.routes");
 const productRouter = require("./routes/product.routes");
 const customerRouter = require("./routes/customer.routes");
 const fileUpload = require("express-fileupload");
+const recipeRouter = require("./routes/recipe.routes");
 require("dotenv").config();
 
 const app = express();
@@ -30,6 +31,7 @@ app.use(`${API_BASE_URL}/`, orderRouter);
 app.use(`${API_BASE_URL}/`, farmerRouter);
 app.use(`${API_BASE_URL}/`, productRouter);
 app.use(`${API_BASE_URL}/`, customerRouter);
+app.use(`${API_BASE_URL}/`, recipeRouter);
 
 // Connect to DB
 connectDB()
