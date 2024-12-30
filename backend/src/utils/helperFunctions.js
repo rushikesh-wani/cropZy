@@ -8,36 +8,26 @@ const sanitizeReqBody = (req, res) => {
   const { firstName, lastName, email, phone, role, password, profileImg } =
     req.body;
   if (!firstName || !lastName || !email || !phone || !password || !role) {
-    return res.status(409).json({
-      statusCode: 409,
-      message: "All fields are required",
-    });
+    throw new Error("All fields are required");
   }
   if (firstName.length < 3 || firstName.length > 50) {
-    return res.status(409).json({
-      statusCode: 409,
-      message:
-        "FirstName either too big or too small. Must be 3 < firstName < 50",
-    });
+    throw new Error(
+      "FirstName either too big or too small. Must be 3 < firstName < 50"
+    );
   }
   if (!/^[a-zA-Z]+$/.test(firstName.trim())) {
-    return res.status(409).json({
-      statusCode: 409,
-      message: "firstName must contain a-z or A-Z character only",
-    });
+    throw new Error("FirstName must contain a-z or A-Z character only");
   }
   if (!/^[a-zA-Z]+$/.test(lastName.trim())) {
-    return res.status(409).json({
-      statusCode: 409,
-      message: "lastName must contain a-z or A-Z character only",
-    });
+    throw new Error("lastName must contain a-z or A-Z character only");
   }
   if (lastName.length < 3 || lastName.length > 50) {
-    return res.status(409).json({
-      statusCode: 409,
-      message:
-        "LastName either too big or too small. Must be 3 < lastName < 50",
-    });
+    throw new Error(
+      "LastName either too big or too small. Must be 3 < lastName < 50"
+    );
+  }
+  if (phone.length != 10 || !/^\d+$/.test(phone)) {
+    throw new Error("Mobile Number must be 10 digit");
   }
 };
 
@@ -48,22 +38,25 @@ const validateReqBody = async (req, res) => {
   const isUserAlreadyExists = await User.findOne({ email: email });
   const isPhoneNumberAlreadyExists = await User.findOne({ phone });
   if (!validRoles.includes(role)) {
-    return res.status(400).json({
-      statusCode: 400,
-      message: "Invalid role provided",
-    });
-  }
-  if (isUserAlreadyExists) {
-    return res.status(400).json({
-      statusCode: 400,
-      message: "User already exists.",
-    });
+    // return res.status(400).json({
+    //   statusCode: 400,
+    //   message: "Invalid role provided",
+    // });
+    throw new Error("Invalid role provided!");
   }
   if (isPhoneNumberAlreadyExists) {
-    return res.status(400).json({
-      statusCode: 400,
-      message: "Phone number already exists",
-    });
+    // return res.status(400).json({
+    //   statusCode: 400,
+    //   message: "Phone number already exists",
+    // });
+    throw new Error("Phone number already exists!");
+  }
+  if (isUserAlreadyExists) {
+    // return res.status(400).json({
+    //   statusCode: 400,
+    //   message: "User already exists.",
+    // });
+    throw new Error("Email already exists!");
   }
 };
 

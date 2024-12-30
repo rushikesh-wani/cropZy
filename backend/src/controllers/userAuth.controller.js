@@ -62,7 +62,7 @@ const signupController = async (req, res) => {
     } else if (role === "admin") {
       // Currently nothing to do here
     } else {
-      res.status(500).json({
+      return res.status(500).json({
         statusCode: 500,
         message: "Unexpected error occured while registering a user.",
       });
@@ -77,10 +77,10 @@ const signupController = async (req, res) => {
     });
   } catch (err) {
     // console.error("Error in /signup ", error);
-    res.status(500).json({
+    return res.status(500).json({
       statusCode: 500,
-      message: "Error signing up the user",
-      err: `${err.message}`,
+      err: "Error signing up the user",
+      message: `${err.message}`,
     });
   }
 };
