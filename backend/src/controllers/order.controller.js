@@ -1,14 +1,7 @@
 const Farmer = require("../models/farmers");
 const Order = require("../models/orders");
 const Product = require("../models/product");
-
-const getAllOrder = async (req, res) => {
-  try {
-    res.send("Hello");
-  } catch (error) {
-    console.log(error);
-  }
-};
+const Cart = require("../models/cart");
 
 const makeAnOrder = async (req, res) => {
   try {
@@ -122,4 +115,83 @@ const makeAnOrder = async (req, res) => {
   }
 };
 
-module.exports = { getAllOrder, makeAnOrder };
+const createOrder = async (req, res) => {
+  try {
+    const { _id } = req.userData;
+    // Fetch the User Cart
+    // Validate farmer consistency
+    // Create orders for each item in the cart
+    // Clear order cart once order placed
+
+    const userCart = await Cart.findOne({ user: _id }).populate(
+      "products.item"
+    );
+
+    if (!userCart || userCart.products.length === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message:
+          "Cart is empty. Please add items to the cart before placing an order.",
+      });
+    }
+
+    const farmerId = userCart.products[0].item.farmerId.toString();
+    const allSameFarmer = userCart.products.every(
+      (product) => product.item.farmerId.toString() === farmerId
+    );
+
+    if (!allSameFarmer) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message:
+          "All items in the cart must be from the same farmer. Clear the cart and try again.",
+      });
+    }
+
+    const items = userCart.products.map((product) => ({
+      item: product.item._id,
+      quantity: product.quantity,
+      weight: {
+        value: product.item.weight.value * product.quantity,
+        unit: product.item.weight.unit,
+      },
+      price: product.price,
+    }));
+
+    const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
+    const orderData = {
+      farmerId: farmerId,
+      customerId: _id,
+      status: "pending",
+      items: items,
+      totalPrice: totalPrice,
+    };
+
+    const newOrder = await Order.create(orderData);
+    const populatedOrder = await Order.findById(newOrder._id)
+      .populate("farmerId", "firstName lastName email phone profileImg")
+      .populate("customerId", "firstName lastName email phone profileImg")
+      .populate("items.item", "itemName img description")
+      .lean();
+
+    // Clear the user's cart
+    await Cart.findOneAndUpdate({ user: _id }, { products: [] });
+
+    return res.status(201).json({
+      statusCode: 201,
+      success: true,
+      message: "Order placed successfully.",
+      order: populatedOrder,
+    });
+  } catch (err) {
+    res.status(500).json({
+      statusCode: 500,
+      message: "INTERNAL ERROR : Error creating the order.",
+      err: err.message,
+    });
+  }
+};
+
+module.exports = { makeAnOrder, createOrder };

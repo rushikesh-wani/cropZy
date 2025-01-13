@@ -82,9 +82,10 @@ const handleOrderStatus = async (req, res) => {
 const getAllOrders = async (req, res) => {
   try {
     const { _id } = req.userData; // Farmer id
-    const allOrders = await Order.find({ farmerId: _id })
-      .populate("item", "itemName img price description category")
-      .populate("customerId", "firstName lastName email phone profileImg");
+    const allOrders = await Order.find({ farmerId: _id }).populate(
+      "customerId",
+      "firstName lastName email phone profileImg"
+    );
     res.status(200).json({
       statusCode: 200,
       message: "Orders fetched successfully",

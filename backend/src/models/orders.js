@@ -20,27 +20,36 @@ const orderSchema = mongoose.Schema(
       },
       required: true,
     },
-    item: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "product",
-      required: true,
-    },
-    weight: {
-      value: {
-        type: Number,
-        required: true,
-        min: 0,
-      },
-      unit: {
-        type: String,
-        required: true,
-        enum: {
-          values: ["gm", "kg", "liters", "ml", "Piece", "Combo"],
-          message: `{VALUE} is not the valid unit`,
+    items: [
+      {
+        item: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "product",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+        weight: {
+          value: {
+            type: Number,
+            required: true,
+          },
+          unit: {
+            type: String,
+            required: true,
+            enum: ["gm", "kg", "liters", "ml", "Piece", "Combo"],
+          },
+        },
+        price: {
+          type: Number,
+          required: true,
         },
       },
-    },
-    price: {
+    ],
+    totalPrice: {
       type: Number,
       required: true,
     },

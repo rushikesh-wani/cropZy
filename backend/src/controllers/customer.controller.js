@@ -132,9 +132,8 @@ const myOrderController = async (req, res) => {
   try {
     const { _id } = req.userData;
     const myOrders = await Order.find({ customerId: _id })
-      .select("_id item farmerId orderDate status weight price")
-      .populate("farmerId", "firstName lastName email phone profileImg")
-      .populate("item", "itemName description img weight price");
+    .populate("farmerId", "firstName lastName email phone profileImg");
+    // .populate("item", "itemName description img weight price");
     if (myOrders.length === 0) {
       return res.status(200).json({
         statusCode: 200,

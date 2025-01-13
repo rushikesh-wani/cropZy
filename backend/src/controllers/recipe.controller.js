@@ -24,9 +24,10 @@ const getRecipe = async (req, res) => {
       recipeText: result?.response?.candidates[0]?.content?.parts[0]?.text,
     });
   } catch (error) {
-    console.error("Error generating recipe:", error);
+    // console.error("Error generating recipe:", error);
     return res.status(500).json({
       error: "Failed to generate the recipe. Please try again later.",
+      err: error,
     });
   }
 };

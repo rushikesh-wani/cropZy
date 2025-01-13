@@ -37,6 +37,26 @@ const addToCart = async (req, res) => {
 
     let userCart = await Cart.findOne({ user: _id });
     if (userCart) {
+      // enforced user to hold items from same farmer
+      const currentFarmerId = isItemIdValid.farmerId;
+      const existingFarmerId =
+        userCart.products.length > 0
+          ? await Product.findById(userCart.products[0].item).then(
+              (product) => product.farmerId
+            )
+          : null;
+
+      if (
+        existingFarmerId &&
+        existingFarmerId.toString() !== currentFarmerId.toString()
+      ) {
+        return res.status(400).json({
+          statusCode: 400,
+          success: false,
+          message:
+            "Cart contains items from a different farmer. Clear the cart to add items from this farmer.",
+        });
+      }
       // User Cart Already exits!
       const itemIndex = userCart.products.findIndex(
         (product) => product.item.toString() === itemId
@@ -179,11 +199,14 @@ const incrementQty = async (req, res) => {
 const getUserCart = async (req, res) => {
   try {
     const { _id } = req.userData;
-    const userCart = await Cart.findOne({ user: _id });
+    const userCart = await Cart.findOne({ user: _id }).populate(
+      "products.item"
+    );
+
     if (!userCart || userCart?.products?.length === 0) {
-      return res.status(204).json({
-        statusCode: 204,
-        success: false,
+      return res.status(200).json({
+        statusCode: 200,
+        success: true,
         message: "Cart is empty! Add items to cart to see.",
         data: {
           user: _id,
@@ -208,4 +231,32 @@ const getUserCart = async (req, res) => {
   }
 };
 
-module.exports = { addToCart, incrementQty, getUserCart };
+const clearCart = async (req, res) => {
+  try {
+    const { _id } = req.userData;
+    const userCart = await Cart.findOne({ user: _id });
+    if (!userCart) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Cart is already empty!",
+      });
+    }
+    const clearCart = await Cart.findByIdAndDelete(userCart._id);
+    return res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Cart cleared! Looking soon you add items to cart.",
+      data: clearCart,
+    });
+  } catch (err) {
+    res.status(500).json({
+      statusCode: 500,
+      success: false,
+      message: "INTERNAL SERVER ERROR",
+      err: err.message,
+    });
+  }
+};
+
+module.exports = { addToCart, incrementQty, getUserCart, clearCart };
