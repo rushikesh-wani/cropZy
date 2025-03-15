@@ -40,11 +40,11 @@ const FarmerLogin = () => {
     }
   };
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div className="w-2/6 px-10 py-6 border rounded-xl shadow-lg">
-        <h1 className="text-2xl font-bold text-center text-green-600">
+    <div className="h-screen bg-violet-50 flex justify-center items-center">
+      <div className="w-2/6 bg-white px-10 py-6 border rounded-xl shadow-lg">
+        {/* <h1 className="text-2xl font-bold text-center text-green-600">
           cropZy
-        </h1>
+        </h1> */}
         <h1 className="my-3 text-xl font-medium text-center">Farmer Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-y-4">
@@ -74,13 +74,13 @@ const FarmerLogin = () => {
               />
             </div>
             <div className="mx-auto">
-              <button className="px-5 py-1 rounded-lg font-medium bg-green-600 text-white hover:bg-green-500">
+              <button className="px-5 py-1 rounded-lg font-medium bg-violet-600 text-white hover:bg-violet-500">
                 Login
               </button>
             </div>
             <p className="text-center">
               Don't have an account?{" "}
-              <Link to={"/signup"} className="text-green-600">
+              <Link to={"/signup"} className="text-violet-600">
                 Register here!
               </Link>
             </p>

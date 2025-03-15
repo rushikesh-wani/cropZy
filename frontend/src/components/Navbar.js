@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="absolute top-0 w-full z-50 bg-white p-4 shadow-md">
+    <nav className="absolute top-0 w-full z-50 bg-white p-3 shadow-md">
       <div className="container mx-auto flex justify-around items-center">
         <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600">
           cropZy

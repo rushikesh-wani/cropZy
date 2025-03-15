@@ -82,10 +82,9 @@ const handleOrderStatus = async (req, res) => {
 const getAllOrders = async (req, res) => {
   try {
     const { _id } = req.userData; // Farmer id
-    const allOrders = await Order.find({ farmerId: _id }).populate(
-      "customerId",
-      "firstName lastName email phone profileImg"
-    );
+    const allOrders = await Order.find({ farmerId: _id })
+      .populate("customerId", "firstName lastName email phone profileImg")
+      .populate("items.item");
     res.status(200).json({
       statusCode: 200,
       message: "Orders fetched successfully",
@@ -124,7 +123,7 @@ const getOrdersBasedOnStatus = async (req, res) => {
       const orderData = await Order.find({
         $and: [{ farmerId: _id }, { status: { $ne: "delivered" } }],
       })
-        .populate("item", "itemName img price description category")
+        .populate("items.item", "itemName img price description category")
         .populate("customerId", "firstName lastName email phone profileImg");
       res.status(200).json({
         statusCode: 200,
@@ -133,7 +132,7 @@ const getOrdersBasedOnStatus = async (req, res) => {
       });
     } else {
       const orderData = await Order.find({ farmerId: _id, status: status })
-        .populate("item", "itemName img price description category")
+        .populate("items.item", "itemName img price description category")
         .populate("customerId", "firstName lastName email phone profileImg");
       res.status(200).json({
         statusCode: 200,
@@ -162,7 +161,7 @@ const viewOrder = async (req, res) => {
       });
     }
     const isOrderIdValid = await Order.findOne({ _id: orderId, farmerId: _id })
-      .populate("item", "itemName img weight price description category")
+      .populate("items.item", "itemName img weight price description category")
       .populate(
         "customerId",
         "firstName lastName email phone profileImg address"

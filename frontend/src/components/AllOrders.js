@@ -35,7 +35,7 @@ const AllOrders = () => {
     }
   }, [status]);
 
-  // console.log(orderData);
+  console.log(orderData);
   return (
     <>
       <RouteNavigate page={"All orders"} />
@@ -124,9 +124,9 @@ const AllOrders = () => {
               <th scope="col" className="px-6 py-3">
                 Customer
               </th>
-              <th scope="col" className="px-6 py-3">
+              {/* <th scope="col" className="px-6 py-3">
                 Image
-              </th>
+              </th> */}
               <th scope="col" className="px-6 py-3 text-nowrap">
                 Item Name
               </th>
@@ -182,7 +182,7 @@ const AllOrders = () => {
                   <td className="px-6 py-4 font-medium text-gray-600">
                     {order?.customerId?.firstName} {order?.customerId?.lastName}
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-600">
+                  {/* <td className="px-6 py-4 font-medium text-gray-600">
                     <div className="w-24 h-12 rounded-xl">
                       <img
                         className="w-full h-full object-cover rounded-xl"
@@ -190,17 +190,18 @@ const AllOrders = () => {
                         alt={order?.item?.itemName}
                       />
                     </div>
-                  </td>
+                  </td> */}
                   <td className="px-6 py-4 font-medium text-gray-600">
-                    {order?.item?.itemName}
+                    {order?.items
+                      ?.map((item) => item?.item?.itemName)
+                      .join(", ")}
                   </td>
 
-                  <td className="text-nowrap px-6 py-4 font-medium text-gray-600">
+                  <td className="px-6 py-4 font-medium text-gray-600">
                     {formatDate(order?.createdAt)}
                   </td>
                   <td className="text-nowrap px-6 py-4 font-medium text-gray-600">
-                    <p>{`${order?.weight?.value} ${order?.weight?.unit} x ${order?.item?.price}`}</p>
-                    <p>{`= ${order?.price}`}</p>
+                    <p>{`₹${order?.totalPrice}`}</p>
                   </td>
                   {/* <td className="text-nowrap px-6 py-4 font-medium text-gray-600">
                     {order?.status === "pending" ? (

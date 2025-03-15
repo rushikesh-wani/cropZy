@@ -146,23 +146,6 @@ const ProfileView = () => {
           <Settings className="text-black" /> Settings
         </Link>
       </div>
-      <div className="my-2 p-2 bg-slate-100 rounded-xl">
-        <Link
-          to={"/dashboard/profile"}
-          className="flex gap-x-2 px-4 py-1 text-gray-800 text-lg border-b border-gray-400"
-        >
-          <UserCircle className="text-black" /> My Profile
-        </Link>
-        <button
-          onClick={logoutHandler}
-          className="w-full flex gap-x-2 px-4 py-1 text-gray-800 text-lg border-b border-gray-400"
-        >
-          <LogOut className="text-black" /> Logout
-        </button>
-        <Link className="flex gap-x-2 px-4 py-1 text-gray-800 text-lg border-b border-gray-400">
-          <Settings className="text-black" /> Settings
-        </Link>
-      </div>
     </div>
   );
 };

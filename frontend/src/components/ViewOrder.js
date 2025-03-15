@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { formatDate } from "../helpers/HelperFunctions";
@@ -7,6 +7,7 @@ import RouteNavigate from "./RouteNavigate";
 const ViewOrder = () => {
   const [orderDetails, setOrderDetails] = useState({});
   const { id } = useParams();
+
   const getOrderDetails = async () => {
     try {
       const res = await axios.get(
@@ -67,7 +68,7 @@ const ViewOrder = () => {
               </p>
               <p className="text-md font-medium">
                 Status :{" "}
-                <span className="text-gray-700 uppercase">
+                <span className="bg-slate-200 px-2 text-gray-700 uppercase">
                   {orderDetails?.status}
                 </span>
               </p>
@@ -105,17 +106,34 @@ const ViewOrder = () => {
               </tr>
             </thead>
             <tbody className="">
+              {orderDetails?.items?.map((order, idx) => (
+                <tr
+                  key={order._id}
+                  className="text-center font-medium border-b"
+                >
+                  <td className="">{idx + 1}</td>
+                  <td className="">{order?.item?.itemName}</td>
+                  <td className="">{`${order?.quantity}`}</td>
+                  <td className="">{`₹${order?.item?.price}`}</td>
+                  <td className="">{`₹${order?.price}`}</td>
+                </tr>
+              ))}
               <tr className="text-center font-medium border-b">
-                <td className="">01</td>
-                <td className="">{orderDetails?.item?.itemName}</td>
-                <td className="">{`${orderDetails?.weight?.value} ${orderDetails?.weight?.unit}`}</td>
-                <td className="">{orderDetails?.item?.price}</td>
-                <td className="">{orderDetails?.price}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td className="bg-green-200 ">Total :</td>
+                <td className="bg-green-200 ">{`₹${orderDetails?.totalPrice}`}</td>
               </tr>
             </tbody>
           </table>
           <div className="mt-5 text-center">
-            <button className="px-4 py-1 text-md text-white font-medium bg-green-500 rounded-lg">
+            <button
+              onClick={() => {
+                window.print();
+              }}
+              className="px-4 py-1 text-md text-white font-medium bg-green-500 rounded-lg"
+            >
               Print Receipt
             </button>
           </div>

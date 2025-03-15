@@ -2,6 +2,7 @@ const Farmer = require("../models/farmers");
 const Order = require("../models/orders");
 const Product = require("../models/product");
 const Cart = require("../models/cart");
+const { isMongoId } = require("validator");
 
 const makeAnOrder = async (req, res) => {
   try {
@@ -194,4 +195,45 @@ const createOrder = async (req, res) => {
   }
 };
 
-module.exports = { makeAnOrder, createOrder };
+const getOrderDetails = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { _id } = req.userData;
+    const isOrderIdValidMongoId = isMongoId(orderId);
+    if (!isOrderIdValidMongoId) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Order Id is not a valid Mongo Object Id",
+      });
+    }
+    const isOrderIdValid = await Order.findOne({
+      customerId: _id,
+      _id: orderId,
+    })
+      .populate("customerId")
+      .populate("farmerId")
+      .populate("items.item");
+    if (!isOrderIdValid) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message: "Order details not found!",
+      });
+    }
+    return res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Order details fetched successfully...",
+      data: isOrderIdValid,
+    });
+  } catch (err) {
+    res.status(500).json({
+      statusCode: 500,
+      message: "INTERNAL ERROR : Error getting order details.",
+      err: err.message,
+    });
+  }
+};
+
+module.exports = { makeAnOrder, createOrder, getOrderDetails };

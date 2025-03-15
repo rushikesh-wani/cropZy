@@ -1,7 +1,9 @@
+import { RouterProvider } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import AppRoutes from "./routes/AppRoutes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import appRouter from "./routes/AppRoutes";
 
 function App() {
   return (
@@ -15,7 +17,7 @@ function App() {
         theme="colored"
       />
 
-      <AppRoutes />
+      <RouterProvider router={appRouter} />
       <ToastContainer />
     </div>
   );

@@ -1,79 +1,50 @@
 import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  SubTitle,
+  Title,
+} from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import axios from "axios";
 
 // Register required components
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-const OrdersOverviewChart = () => {
-  const [orderOverview, setOrderOverView] = useState(null);
-  const [summary, setSummary] = useState(null);
-  const statusColorMapping = {
-    rejected: "#FF5722",
-    delivered: "#FFC107",
-    approved: "#4CAF50",
-    pending: "#2196F3",
-  };
-
-  const getOrderOview = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/farmer/getOrderSummary`,
-        {
-          withCredentials: true,
-        }
-      );
-      const counts = res?.data?.data?.map((item) => item.count);
-      const statuses = res?.data?.data?.map((item) => item.status);
-      const colors = statuses.map((status) => statusColorMapping[status]);
-      setSummary(res?.data?.data);
-      setOrderOverView({
-        labels: statuses,
-        datasets: [
-          {
-            label: "Order Status Overview",
-            data: counts,
-            backgroundColor: colors,
-            hoverBackgroundColor: colors,
-            borderWidth: 1,
-          },
-        ],
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getOrderOview();
-  }, []);
-
+const OrdersOverviewChart = ({ orderOverview }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
+      title: {
+        display: true,
+        text: "Orders Summary",
+        position: "top",
+        font: { size: 24 },
+        color: "#00000",
+        align: "center",
+      },
       legend: {
-        position: "bottom",
+        position: "right",
       },
       tooltip: {
         enabled: true,
       },
     },
-    cutout: "50%",
+    cutout: "60%",
   };
 
-  console.log(orderOverview);
-  console.log(summary);
   return (
-    <div className="my-2 grid grid-cols-2 gap-2 items-center">
+    <div className="">
       {orderOverview?.length === 0 ? (
         <div className="col-span-2">
           <p className="text-center">{"No data to show yet! :)"}</p>
         </div>
       ) : (
         <>
-          <div className="p-1 min-h-56">
+          <div className="min-h-64">
             {orderOverview ? (
               <Doughnut
                 key={"order-overview-chart"}
@@ -82,20 +53,6 @@ const OrdersOverviewChart = () => {
               />
             ) : (
               <h1>No data to show</h1>
-            )}
-          </div>
-          <div className="p-4 grid grid-cols-2 gap-5 rounded-xl">
-            {summary ? (
-              summary?.map((value, index) => (
-                <div className="flex flex-col text-center p-2 text-gray-800 bg-slate-100 rounded-xl">
-                  <p className="font-bold text-5xl">{value?.count}</p>
-                  <p className=" font-medium text-xl uppercase">
-                    {value?.status}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p>Loading</p>
             )}
           </div>
         </>

@@ -49,6 +49,48 @@ const getProductDetails = async (req, res) => {
     });
   }
 };
+
+const getFreshFruits = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    const freshFruits = await Product.find({
+      category: "Fresh Fruits",
+    })
+      .populate("farmerId", "firstName lastName profileImg")
+      .populate("farmDetails")
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    const totalItem = await Product.countDocuments({
+      category: "Fresh Fruits",
+    });
+    if (!freshFruits || freshFruits.length === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: "No more items found in the Fresh Fruits category",
+      });
+    }
+    return res.status(200).json({
+      statusCode: 200,
+      message: "Fresh fruits category items fetched successfully!",
+      pagination: {
+        currentPage: Number(page),
+        TotalPages: Math.ceil(totalItem / limit),
+        currentItems: limit,
+        TotalItems: totalItem,
+      },
+      data: freshFruits,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      statusCode: 500,
+      message: "INTERNAL SERVER ERROR",
+      err: err.message,
+    });
+  }
+};
+
 const getAllItemsController = async (req, res) => {
   try {
     const { _id } = req.userData;
@@ -284,6 +326,7 @@ const updateItemDetails = async (req, res) => {
 
 module.exports = {
   getProductDetails,
+  getFreshFruits,
   productAddController,
   getAllItemsController,
   deleteItemController,

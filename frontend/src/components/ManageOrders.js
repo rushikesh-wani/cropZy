@@ -17,7 +17,9 @@ const ManageOrders = () => {
     );
     if (res?.status === 200) {
       setOrderData(res?.data?.data);
-      toast.success(`${res?.data?.message}`);
+      toast.success(`${res?.data?.message}`, {
+        position: "top-center",
+      });
     }
   };
   const manageOrder = async (_id, status) => {
@@ -35,9 +37,15 @@ const ManageOrders = () => {
         theme: "colored",
       });
     } else if (status === "rejected") {
-      toast.error(`${res?.data?.message}`);
+      toast.error(`${res?.data?.message}`, {
+        position: "top-center",
+        theme: "colored",
+      });
     } else if (status === "delivered") {
-      toast.success(`${res?.data?.message}`);
+      toast.success(`${res?.data?.message}`, {
+        position: "top-center",
+        theme: "colored",
+      });
     }
   };
   useEffect(() => {
@@ -49,8 +57,6 @@ const ManageOrders = () => {
     <>
       <RouteNavigate page={"Manage Orders"} />
       <div className="relative h-[500px] overflow-y-auto no-scrollbar bg-white pb-6 border rounded-lg">
-        <p>Manage Orders</p>
-        <p>Here all the orders except "Delivered" status are shown</p>
         <div className="">
           <table className="w-full text-sm text-gray-500">
             <thead className="sticky top-0 z-10 text-md text-gray-800 uppercase bg-opacity-75 backdrop-filter backdrop-blur-lg bg-emerald-300">
@@ -67,18 +73,14 @@ const ManageOrders = () => {
                 <th scope="col" className="px-6 py-3 text-nowrap">
                   Item Name
                 </th>
-                <th scope="col" className="px-6 py-3">
-                  Image
-                </th>
+
                 <th scope="col" className="px-6 py-3">
                   Date
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Price
                 </th>
-                <th scope="col" className="px-6 py-3">
-                  Status
-                </th>
+
                 <th scope="col" className="px-6 py-3">
                   Action
                 </th>
@@ -119,43 +121,18 @@ const ManageOrders = () => {
                       {order?.customerId?.lastName}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-600">
-                      {order?.item?.itemName}
+                      {order?.items
+                        ?.map((item) => item.item.itemName)
+                        .join(", ")}
                     </td>
+
                     <td className="px-6 py-4 font-medium text-gray-600">
-                      <div className="w-24 h-12 rounded-xl">
-                        <img
-                          className="w-full h-full object-cover rounded-xl"
-                          src={order?.item?.img}
-                          alt={order?.item?.itemName}
-                        />
-                      </div>
-                    </td>
-                    <td className="text-nowrap px-6 py-4 font-medium text-gray-600">
                       {formatDate(order?.createdAt)}
                     </td>
                     <td className="text-nowrap px-6 py-4 font-medium text-gray-600">
-                      <p>{`${order?.weight?.value} ${order?.weight?.unit} x ${order?.item?.price}`}</p>
-                      <p>{`= ${order?.price}`}</p>
+                      <p>{`₹${order?.totalPrice}`}</p>
                     </td>
-                    <td className="text-nowrap px-6 py-4 font-medium text-gray-600">
-                      {order?.status === "pending" ? (
-                        <p className="mt-2 mx-auto uppercase w-fit text-xs font-medium px-2 rounded-lg text-center bg-slate-100 border border-gray-600">
-                          {order?.status}
-                        </p>
-                      ) : order?.status === "approved" ? (
-                        <p className="mt-2 mx-auto uppercase w-fit text-xs font-medium text-green-600 px-2 rounded-lg text-center bg-green-100 border border-green-800">
-                          {order?.status}
-                        </p>
-                      ) : order?.status === "delivered" ? (
-                        <p className="mt-2 mx-auto uppercase w-fit text-xs font-medium text-yellow-600 px-2 rounded-lg text-center bg-yellow-100 border border-yellow-800">
-                          {order?.status}
-                        </p>
-                      ) : (
-                        <p className="mt-2 mx-auto uppercase w-fit text-xs font-medium px-2 text-red-600 rounded-lg text-center bg-red-100 border border-red-800">
-                          {order?.status}
-                        </p>
-                      )}
-                    </td>
+
                     <td className="px-6 py-4 flex space-x-3">
                       <Link
                         to={`/dashboard/view-order/${order?._id}`}

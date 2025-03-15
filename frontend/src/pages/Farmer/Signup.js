@@ -66,11 +66,11 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-tr from-green-100 via-green-200 to-green-300 flex justify-center items-center">
+    <div className="h-screen bg-violet-50 flex justify-center items-center">
       <div className="bg-white w-3/6 px-10 py-6 border rounded-xl shadow-lg">
-        <h1 className="text-2xl font-bold text-center text-green-600">
+        {/* <h1 className="text-2xl font-bold text-center text-green-600">
           cropZy
-        </h1>
+        </h1> */}
         <h1 className="my-3 text-xl font-medium text-center">Farmer Signup</h1>
         <form onSubmit={onSubmitForm}>
           <div className="grid grid-flow-col grid-cols-2 gap-x-10">
@@ -222,12 +222,12 @@ const Signup = () => {
             />
           </div>
           <div className="text-center mt-4">
-            <button className="px-5 py-1 rounded-lg font-medium bg-green-600 text-white hover:bg-green-500">
+            <button className="px-5 py-1 rounded-lg font-medium bg-violet-600 text-white hover:bg-violet-500">
               Signup
             </button>
             <p>
               Already registered as farmer!{" "}
-              <Link to={"/login"} className="text-green-600">
+              <Link to={"/login"} className="text-violet-600">
                 Login
               </Link>
             </p>

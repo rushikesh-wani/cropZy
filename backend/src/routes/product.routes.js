@@ -8,6 +8,7 @@ const {
   updateItemDetails,
   productAddController,
   getProductDetails,
+  getFreshFruits,
 } = require("../controllers/product.controller");
 const upload = require("../config/multer");
 const cloudinary = require("../config/cloudinary");
@@ -53,6 +54,8 @@ productRouter.post("/upload", upload.single("image"), async (req, res) => {
     });
   }
 });
+
+productRouter.get("/fresh-fruits", getFreshFruits);
 
 productRouter.get(
   "/product/getAllItems",
