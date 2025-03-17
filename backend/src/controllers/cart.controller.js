@@ -1,6 +1,7 @@
 const Cart = require("../models/cart");
 const validator = require("validator");
 const Product = require("../models/product");
+const Farmer = require("../models/farmers");
 const { isMongoId } = validator;
 
 const addToCart = async (req, res) => {
@@ -35,7 +36,9 @@ const addToCart = async (req, res) => {
       });
     }
 
-    let userCart = await Cart.findOne({ user: _id });
+    let userCart = await Cart.findOne({ user: _id }).populate(
+      "farmer.farmerDetails"
+    );
     if (userCart) {
       // enforced user to hold items from same farmer
       const currentFarmerId = isItemIdValid.farmerId;
@@ -76,13 +79,19 @@ const addToCart = async (req, res) => {
           price: isItemIdValid.price,
         });
       }
-
       await userCart.save();
     } else {
+      const farmDetails = await Farmer.findOne({
+        userId: isItemIdValid.farmerId,
+      });
       // Create new Cart for User
       userCart = new Cart({
         user: _id,
         products: [{ item: itemId, quantity: 1, price: isItemIdValid.price }],
+        farmer: {
+          farmerDetails: isItemIdValid.farmerId,
+          farmDetails: farmDetails._id,
+        },
       });
 
       await userCart.save();
@@ -199,10 +208,10 @@ const incrementQty = async (req, res) => {
 const getUserCart = async (req, res) => {
   try {
     const { _id } = req.userData;
-    const userCart = await Cart.findOne({ user: _id }).populate(
-      "products.item"
-    );
-
+    const userCart = await Cart.findOne({ user: _id })
+      .populate("products.item")
+      .populate("farmer.farmerDetails", "firstName lastName phone")
+      .populate("farmer.farmDetails", "farmName farmLocation");
     if (!userCart || userCart?.products?.length === 0) {
       return res.status(200).json({
         statusCode: 200,

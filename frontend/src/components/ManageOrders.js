@@ -1,62 +1,33 @@
 import React from "react";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { CheckCircle, Eye, Truck, XCircle } from "lucide-react";
 import { formatDate } from "../helpers/HelperFunctions";
 import { Link } from "react-router-dom";
 import RouteNavigate from "./RouteNavigate";
+import { getData, manageOrder } from "../services/orderServices";
 const ManageOrders = () => {
   const [orderData, setOrderData] = useState([]);
-  const getData = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_SERVER_URL}/farmer/orders/excludeDelivered`,
-      {
-        withCredentials: true,
-      }
-    );
-    if (res?.status === 200) {
-      setOrderData(res?.data?.data);
-      toast.success(`${res?.data?.message}`, {
-        position: "top-center",
-      });
+  const [currPage, setCurrPage] = useState(1);
+  const itemPerPage = 5;
+  const startIdx = (currPage - 1) * itemPerPage;
+  const endIdx = startIdx + itemPerPage;
+  const currItem = orderData?.slice(startIdx, endIdx);
+  const totalPages = Math.ceil(orderData?.length / itemPerPage);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrPage(page);
     }
   };
-  const manageOrder = async (_id, status) => {
-    const res = await axios.post(
-      `${process.env.REACT_APP_SERVER_URL}/order/${status}/${_id}`,
-      {},
-      {
-        withCredentials: true,
-      }
-    );
-    console.log(res);
-    if (status === "approved") {
-      toast.success(`${res?.data?.message}`, {
-        position: "top-center",
-        theme: "colored",
-      });
-    } else if (status === "rejected") {
-      toast.error(`${res?.data?.message}`, {
-        position: "top-center",
-        theme: "colored",
-      });
-    } else if (status === "delivered") {
-      toast.success(`${res?.data?.message}`, {
-        position: "top-center",
-        theme: "colored",
-      });
-    }
-  };
+
   useEffect(() => {
-    getData();
+    getData(setOrderData);
   }, []);
 
-  // console.log(orderData);
   return (
     <>
       <RouteNavigate page={"Manage Orders"} />
-      <div className="relative h-[500px] overflow-y-auto no-scrollbar bg-white pb-6 border rounded-lg">
+      <div className="relative h-[500px] overflow-y-auto no-scrollbar bg-white border rounded-lg">
         <div className="">
           <table className="w-full text-sm text-gray-500">
             <thead className="sticky top-0 z-10 text-md text-gray-800 uppercase bg-opacity-75 backdrop-filter backdrop-blur-lg bg-emerald-300">
@@ -88,13 +59,13 @@ const ManageOrders = () => {
             </thead>
             {orderData ? (
               <tbody className="h-44 overflow-auto">
-                {orderData?.map((order, index) => (
+                {currItem?.map((order, index) => (
                   <tr
                     key={order._id}
                     className="odd:bg-white even:bg-emerald-50 border-b hover:bg-gradient-to-r hover:from-green-200 hover:via-green-100 hover:to-green-50"
                   >
                     <td className="px-6 py-4 text-center font-medium text-gray-600">
-                      {index + 1}
+                      {startIdx + index + 1}
                     </td>
                     <td className="px-6 py-4 text-center font-medium text-gray-600">
                       {order?._id}
@@ -143,7 +114,7 @@ const ManageOrders = () => {
                       <button
                         disabled={order?.status === "approved" ? true : false}
                         onClick={() => {
-                          manageOrder(order._id, "approved");
+                          manageOrder(order._id, "approved", setOrderData);
                         }}
                         className="bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-300 p-2 rounded-full text-white disabled:opacity-50"
                       >
@@ -153,7 +124,12 @@ const ManageOrders = () => {
                       <button
                         disabled={order?.status === "rejected" ? true : false}
                         onClick={() => {
-                          manageOrder(order._id, "rejected");
+                          manageOrder(
+                            order._id,
+                            "rejected",
+
+                            setOrderData
+                          );
                         }}
                         className="bg-red-600 hover:bg-red-500 shadow-md shadow-red-300 text-white p-2 rounded-full disabled:opacity-50"
                       >
@@ -162,7 +138,12 @@ const ManageOrders = () => {
                       <button
                         disabled={order?.status === "delivered" ? true : false}
                         onClick={() => {
-                          manageOrder(order._id, "delivered");
+                          manageOrder(
+                            order._id,
+                            "delivered",
+
+                            setOrderData
+                          );
                         }}
                         className={`bg-yellow-400 hover:bg-yellow-500 shadow-md shadow-yellow-300 text-white p-2 rounded-full disabled:opacity-50`}
                       >
@@ -201,6 +182,39 @@ const ManageOrders = () => {
             )}
           </table>
         </div>
+      </div>
+      <div className="p-2 sticky bottom-0 bg-white w-full flex justify-center items-center gap-2">
+        <button
+          onClick={() => {
+            goToPage(currPage - 1);
+          }}
+          disabled={currPage === 1}
+          className={`px-2 ${currPage === 1 && "text-gray-400"}`}
+        >
+          Prev
+        </button>
+        {[...Array(totalPages)].map((_, idx) => (
+          <button
+            key={idx + 1 * 100 - 9}
+            onClick={() => {
+              goToPage(idx + 1);
+            }}
+            className={`px-2 border border-gray-700 ${
+              currPage === idx + 1 && "font-bold bg-green-600 text-white"
+            }`}
+          >
+            {idx + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => {
+            goToPage(currPage + 1);
+          }}
+          disabled={currPage === totalPages}
+          className={`px-2 ${currPage === totalPages && "text-gray-400"}`}
+        >
+          Next
+        </button>
       </div>
     </>
   );

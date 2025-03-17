@@ -24,6 +24,18 @@ const cartSchema = new mongoose.Schema(
         },
       },
     ],
+    farmer: {
+      farmerDetails: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+        required: true,
+      },
+      farmDetails: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "farmer",
+        required: true,
+      },
+    },
   },
   { timestamps: true }
 );

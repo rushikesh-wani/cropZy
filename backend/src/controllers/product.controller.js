@@ -210,17 +210,17 @@ const deleteItemController = async (req, res) => {
     });
 
     if (!doesItemExists) {
-      res.status(404).json({
+      return res.status(404).json({
         statusCode: 404,
         message: "Item not found!",
       });
     } else {
       const isItemOrdered = await Order.find({
-        itemId: itemId,
+        "items.item": itemId,
         farmerId: _id,
         status: { $ne: "delivered" },
       });
-      if (isItemOrdered) {
+      if (isItemOrdered.length > 0) {
         return res.status(409).json({
           statusCode: 409,
           success: false,

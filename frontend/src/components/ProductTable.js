@@ -7,6 +7,13 @@ import { Link } from "react-router-dom";
 
 const ProductTable = () => {
   const [productData, setProductData] = useState([]);
+  const [currPage, setCurrPage] = useState(1);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrPage(page);
+    }
+  };
 
   const productDeleteHandler = async (itemId) => {
     try {
@@ -16,15 +23,25 @@ const ProductTable = () => {
       );
       console.log(res);
       if (res?.status === 200) {
-        // setProductData(); // write here logic to refresh the product data after deletion of product from list
-        // setProductData((prev) => prev.filter((product) => product._id != itemId));
         toast.success(`${res?.data?.message}`);
+        setProductData((prevProducts) =>
+          prevProducts.filter((product) => product._id != itemId)
+        );
       }
     } catch (err) {
       console.log(err);
       toast.warn(`${err?.response?.data?.message}`);
     }
   };
+
+  const totalItems = productData?.length;
+  const itemPerPage = 10;
+  const startIdx = (currPage - 1) * itemPerPage;
+  const endIdx = startIdx + itemPerPage;
+  const currItem = productData?.slice(startIdx, endIdx);
+
+  const totalPages = Math.ceil(totalItems / itemPerPage);
+  console.log(productData?.length);
   useEffect(() => {
     try {
       const getData = async () => {
@@ -34,18 +51,17 @@ const ProductTable = () => {
             withCredentials: true,
           }
         );
-        setProductData(res?.data);
+        setProductData(res?.data?.data);
       };
       getData();
     } catch (error) {
       console.log(error);
     }
   }, []);
-  console.log(productData);
   return (
     <>
       <RouteNavigate page={"All Products"} />
-      <div className="relative h-[500px] overflow-y-auto no-scrollbar bg-white pb-6 border rounded-lg">
+      <div className="relative h-[500px] overflow-y-auto no-scrollbar bg-white border rounded-lg">
         {/* <h2 className="text-lg font-medium mb-4 pl-6 pt-4 text-green-600">
           Product Table
         </h2> */}
@@ -82,13 +98,13 @@ const ProductTable = () => {
 
             {productData ? (
               <tbody className="h-44 overflow-auto">
-                {productData?.data?.map((product, index) => (
+                {currItem?.map((product, index) => (
                   <tr
                     key={product._id}
                     className="odd:bg-white even:bg-emerald-50 border-b hover:bg-gradient-to-r hover:from-green-200 hover:via-green-100 hover:to-green-50"
                   >
                     <td className="px-6 py-4 text-center font-medium text-gray-600">
-                      {index + 1}
+                      {startIdx + index + 1}
                     </td>
                     <td className="px-6 py-4 text-center font-medium text-gray-600">
                       <div className="w-24 h-12 rounded-xl">
@@ -165,6 +181,39 @@ const ProductTable = () => {
             )}
           </table>
         </div>
+      </div>
+      <div className="p-2 sticky right-0 left-0 bottom-0 bg-white w-full flex justify-center items-center gap-2">
+        <button
+          onClick={() => {
+            goToPage(currPage - 1);
+          }}
+          disabled={currPage === 1}
+          className={`px-2 ${currPage === 1 && "text-gray-400"}`}
+        >
+          Prev
+        </button>
+        {[...Array(totalPages)].map((_, idx) => (
+          <button
+            key={idx + 1 * 100 - 9}
+            onClick={() => {
+              goToPage(idx + 1);
+            }}
+            className={`px-2 border border-gray-700 ${
+              currPage === idx + 1 && "font-bold bg-green-600 text-white"
+            }`}
+          >
+            {idx + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => {
+            goToPage(currPage + 1);
+          }}
+          disabled={currPage === totalPages}
+          className={`px-2 ${currPage === totalPages && "text-gray-400"}`}
+        >
+          Next
+        </button>
       </div>
     </>
   );

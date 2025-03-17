@@ -63,7 +63,7 @@ const DashboardGrid = () => {
           </div>
         ))}
 
-        <div className="col-span-2 bg-neutral-100 border-2 border-slate-400/10 p-4 rounded-xl">
+        {/* <div className="col-span-2 bg-neutral-100 border-2 border-slate-400/10 p-4 rounded-xl">
           Large Item
         </div>
         <div className="col-span-6 bg-neutral-100 border-2 border-slate-400/10 p-4 rounded-xl">
@@ -71,7 +71,7 @@ const DashboardGrid = () => {
         </div>
         <div className="bg-neutral-100 border-2 border-slate-400/10 p-4 rounded-xl">
           Large Item
-        </div>
+        </div> */}
       </div>
     </>
   );

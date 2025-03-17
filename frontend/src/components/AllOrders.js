@@ -26,7 +26,7 @@ const AllOrders = () => {
         );
         if (res?.status === 200) {
           setOrderData(res?.data?.data);
-          toast.success(`${res?.data?.message}`);
+          console.log(res?.data?.message);
         }
       };
       getData();
